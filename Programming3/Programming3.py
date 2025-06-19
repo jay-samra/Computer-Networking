@@ -31,10 +31,10 @@ def tcpScanner(portLow, portHigh, target):
 
             # If result is 0, the port is open
             if result == 0:
-                print(f"Port {i} is OPEN on {target}")
+                print(f"Port {i} Open")
             else:
                 # Any non-zero result means the port is closed or filtered
-                print(f"Port {i} is CLOSED or FILTERED on {target}")
+                print(f"Port {i} is Closed")
 
         # Handle case where connection times out
         except socket.timeout:
@@ -53,7 +53,22 @@ def udpScanner(portLow, portHigh, target):
     for i in range(portLow, portHigh, target):
         
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        
+        sock.settimeout(2)
 
+        try:
+            print(f"Port {i} Open")
+        
+        except socket.timeout:
+            print(f"Port {i} Closed")
+            
+        except Exception as e:
+            print(f"Port {i} Closed")
+        
+        finally:
+            sock.close()
+            
+            
 
 def main():
     if len(sys.argv) != 5:
