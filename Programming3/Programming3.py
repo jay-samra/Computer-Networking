@@ -1,4 +1,4 @@
-from socket import *
+
 import sys
 
 # Import the socket module for networking operations
@@ -50,21 +50,31 @@ def tcpScanner(portLow, portHigh, target):
             
 def udpScanner(portLow, portHigh, target):
     
-    for i in range(portLow, portHigh, target):
-        
+    for i in range(portLow, portHigh + 1):
+        # creatin UDP socket
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         
+        # waiting 2 seconds until timeout
         sock.settimeout(2)
-
         try:
+            message = b"Port"
+            # Using sendto bevause of UDP socket
+            sock.sendto(message, (target, i))
+            
+            # Using recvfrom which was used in Assingment #2
+            # checking for response
+            response, filler = sock.recvfrom(1024)
+        
             print(f"Port {i} Open")
         
+        
+        # if port is closed, display appropriate message
         except socket.timeout:
             print(f"Port {i} Closed")
             
         except Exception as e:
             print(f"Port {i} Closed")
-        
+        # close the socket
         finally:
             sock.close()
             
@@ -81,13 +91,17 @@ def main():
     
     protocol = sys.argv[2]
 
+    # storing the range of ports to scan as ints
     portLow = int(sys.argv[3])
-    
     portHigh = int(sys.argv[4])
     
     hostName = socket.gethostbyname(hostname)
     
+    # Calling the correct scanner function based on user input
     if (protocol == "tcp"):
         tcpScanner(portLow, portHigh, hostName)
     elif (protocol == "udp"):
         udpScanner(portLow, portHigh, hostName)
+        
+if __name__ == "__main__":
+    main()
