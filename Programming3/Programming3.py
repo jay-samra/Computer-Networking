@@ -31,7 +31,14 @@ def tcpScanner(portLow, portHigh, target):
 
             # If result is 0, the port is open
             if result == 0:
-                print(f"Port {i} Open")
+                try:
+                    output = socket.getservbyport(i, protocol.lower())
+                except:
+                    output = "SVC Name Unavailbe"
+                
+                    
+                print(f"Port {i} Open : {output}")
+                
             else:
                 # Any non-zero result means the port is closed or filtered
                 print(f"Port {i} is Closed")
@@ -64,8 +71,13 @@ def udpScanner(portLow, portHigh, target):
             # Using recvfrom which was used in Assingment #2
             # checking for response
             response, filler = sock.recvfrom(1024)
+            
+            try:
+                output = socket.getservbyport(i, protocol.lower())
+            except:
+                output = "SVC Name Unvailable"
         
-            print(f"Port {i} Open")
+            print(f"Port {i} Open : {output}")
         
         
         # if port is closed, display appropriate message
@@ -73,7 +85,7 @@ def udpScanner(portLow, portHigh, target):
             print(f"Port {i} Closed")
             
         except Exception as e:
-            print(f"Port {i} Closed")
+            print(f"Error: Host {target} does not exist")
         # close the socket
         finally:
             sock.close()
